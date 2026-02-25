@@ -19,6 +19,6 @@ export interface Purchase {
   status: PurchaseStatus;
   total: number;
   paid: number;
-  balance: number;
+  balance: number;   
   paymentStatus: PaymentStatus;
 }
