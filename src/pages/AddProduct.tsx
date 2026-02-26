@@ -17,10 +17,12 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/context/LanguageContext';
 import { useProducts } from '@/context/ProductsContext';
+import { useGroups } from '@/context/GroupsContext';
 
 export default function AddProduct() {
   const { t, direction } = useLanguage();
   const { addProduct } = useProducts();
+  const { groups } = useGroups();
   const navigate = useNavigate();
   const [showAdditionalUnit, setShowAdditionalUnit] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -31,12 +33,20 @@ export default function AddProduct() {
     name: '',
     code: '',
     brand: '',
-    category: '',
+    categoryId: '',
     cost: '0',
     price: '0',
     unit: 'وحدة',
     alertQuantity: '0'
   });
+
+  const [errors, setErrors] = useState<{
+    name?: string;
+    code?: string;
+    categoryId?: string;
+    cost?: string;
+    price?: string;
+  }>({});
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -46,10 +56,32 @@ export default function AddProduct() {
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     
-    if (!formData.name || !formData.code) {
-      alert(direction === 'rtl' ? 'يرجى إدخال اسم الصنف وكوده' : 'Please enter product name and code');
+    const newErrors: typeof errors = {};
+
+    if (!formData.name.trim()) {
+      newErrors.name = direction === 'rtl' ? 'اسم الصنف مطلوب' : 'Product name is required';
+    }
+    if (!formData.code.trim()) {
+      newErrors.code = direction === 'rtl' ? 'كود الصنف مطلوب' : 'Product code is required';
+    }
+    if (!formData.categoryId) {
+      newErrors.categoryId = direction === 'rtl' ? 'يرجى اختيار التصنيف الرئيسي' : 'Please select a main category';
+    }
+    if (!formData.cost.trim() || isNaN(Number(formData.cost))) {
+      newErrors.cost = direction === 'rtl' ? 'التكلفة يجب أن تكون رقمًا' : 'Cost must be a number';
+    }
+    if (!formData.price.trim() || isNaN(Number(formData.price))) {
+      newErrors.price = direction === 'rtl' ? 'سعر البيع يجب أن يكون رقمًا' : 'Price must be a number';
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
+
+    setErrors({});
+
+    const selectedGroup = groups.find(g => String(g.id) === String(formData.categoryId));
 
     addProduct({
       image: fileName ? "https://picsum.photos/seed/new/50/50" : "",
@@ -57,7 +89,8 @@ export default function AddProduct() {
       name: formData.name,
       brand: formData.brand,
       agent: "",
-      category: formData.category || "عام",
+      category: selectedGroup?.name || "عام",
+      categoryId: selectedGroup?.id,
       cost: formData.cost,
       price: formData.price,
       quantity: "0.00",
@@ -65,7 +98,6 @@ export default function AddProduct() {
       alertQuantity: formData.alertQuantity
     });
 
-    alert(direction === 'rtl' ? 'تم حفظ الصنف بنجاح' : 'Product saved successfully');
     navigate('/products');
   };
 
@@ -111,6 +143,9 @@ export default function AddProduct() {
                         onChange={handleInputChange}
                         className="w-full border border-primary rounded-md px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-primary" 
                       />
+                      {errors.name && (
+                        <p className="mt-1 text-xs text-red-600">{errors.name}</p>
+                      )}
                   </div>
 
                   <div>
@@ -154,6 +189,9 @@ export default function AddProduct() {
                           </button>
                       </div>
                       <p className="text-xs text-gray-500 mt-1">{t('barcode_reader_hint')}</p>
+                      {errors.code && (
+                        <p className="mt-1 text-xs text-red-600">{errors.code}</p>
+                      )}
                   </div>
 
                   <div>
@@ -179,6 +217,9 @@ export default function AddProduct() {
                         onChange={handleInputChange}
                         className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm outline-none focus:border-primary" 
                       />
+                      {errors.cost && (
+                        <p className="mt-1 text-xs text-red-600">{errors.cost}</p>
+                      )}
                   </div>
 
                   <div>
@@ -190,6 +231,9 @@ export default function AddProduct() {
                         onChange={handleInputChange}
                         className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm outline-none focus:border-primary" 
                       />
+                      {errors.price && (
+                        <p className="mt-1 text-xs text-red-600">{errors.price}</p>
+                      )}
                   </div>
 
                   <div>
@@ -208,15 +252,21 @@ export default function AddProduct() {
                   <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">{t('main_categories_required')}</label>
                       <select 
-                        name="category"
-                        value={formData.category}
+                        name="categoryId"
+                        value={formData.categoryId}
                         onChange={handleInputChange}
                         className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm outline-none focus:border-primary bg-white"
                       >
                           <option value="">{t('select_main_categories')}</option>
-                          <option value="عبايات سوداء">عبايات سوداء</option>
-                          <option value="عبايات ملونة">عبايات ملونة</option>
+                          {groups.map((g) => (
+                            <option key={g.id} value={g.id}>
+                              {g.name}
+                            </option>
+                          ))}
                       </select>
+                      {errors.categoryId && (
+                        <p className="mt-1 text-xs text-red-600">{errors.categoryId}</p>
+                      )}
                   </div>
 
                   <div>
