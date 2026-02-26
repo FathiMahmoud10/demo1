@@ -6,6 +6,8 @@
 import { Routes, Route } from 'react-router-dom';
 import Login from '@/pages/Login';
 import ForgotPassword from '@/pages/ForgotPassword';
+import VerifyOTP from '@/pages/VerifyOTP';
+import ResetPassword from '@/pages/ResetPassword';
 import Dashboard from '@/pages/Dashboard';
 import ProductsList from '@/pages/ProductsList';
 import AddProduct from '@/pages/AddProduct';
@@ -40,6 +42,8 @@ export default function App() {
     <Routes>
       <Route path="/" element={<Login />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/verify-otp" element={<VerifyOTP />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
       
       {/* Protected Routes with Layout */}
       <Route path="/dashboard" element={<Layout><Dashboard /></Layout>} />

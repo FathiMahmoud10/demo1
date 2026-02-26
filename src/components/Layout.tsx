@@ -792,7 +792,15 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                         {t('settings')}
                       </button>
                       <div className="h-px bg-[var(--border)] my-1"></div>
-                      <button className="w-full text-right px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          localStorage.removeItem('takamul_token');
+                          localStorage.removeItem('takamul_refresh_token');
+                          navigate('/');
+                        }}
+                        className="w-full text-right px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
+                      >
                         <LogOut size={16} />
                         {t('logout')}
                       </button>
