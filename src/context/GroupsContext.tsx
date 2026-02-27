@@ -144,7 +144,7 @@ export const GroupsProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         createdItem?.description ||
         ''
       );
-      setGroups(prev => [...prev, { id, code: createdItem?.code ?? `CAT-${String(id).padStart(3,'0')}`, name: nameStr }]);
+      setGroups(prev => [...prev, { id, code: createdItem?.code ?? `CAT-${String(id).padStart(3, '0')}`, name: nameStr }]);
     }
 
     // Reload list on success (ensures fresh data if API returns after commit)
@@ -155,23 +155,23 @@ export const GroupsProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const token = localStorage.getItem('takamul_token');
     const url = `${API_BASE}/api/ProductCategories/${id}`;
     console.debug('deleteGroup calling DELETE', url);
-    
+
     const res = await fetch(url, {
       method: 'DELETE',
       headers: {
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
     });
-    
+
     console.debug('deleteGroup response status:', res.status, res.ok);
-    
+
     if (!res.ok) {
       const errorText = await res.text();
       const errorMsg = `HTTP ${res.status}: ${errorText}`;
       console.error('deleteGroup failed:', errorMsg);
       throw new Error(errorMsg);
     }
-    
+
     console.debug('deleteGroup succeeded for id:', id);
     // Reload list after delete
     await loadFromApi();
