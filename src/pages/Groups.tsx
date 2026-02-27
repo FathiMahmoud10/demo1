@@ -67,7 +67,7 @@ const Groups = () => {
     }
   };
 
-const handleDeleteGroup = async (id: number) => {
+  const handleDeleteGroup = async (id: number) => {
     try {
       await deleteGroup(id);
       setToastMessage(direction === 'rtl' ? 'تم حذف التصنيف' : 'Group deleted');
