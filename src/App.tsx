@@ -45,6 +45,7 @@ import AddTaxInvoice from '@/pages/AddTaxInvoice';
 import AddSimplifiedTaxInvoice from '@/pages/AddSimplifiedTaxInvoice';
 import ImportSales from '@/pages/ImportSales';
 import ImportPurchases from '@/pages/ImportPurchases';
+import Products from './lib/Products';
 
 export default function App() {
   return (
@@ -87,6 +88,7 @@ export default function App() {
       <Route path="/expenses" element={<Layout><Expenses /></Layout>} />
       <Route path="/products/groups" element={<Layout><Groups /></Layout>} />
       
+      <Route path="/products" element={<Products />} />
       <Route path="/products/units" element={<Layout><Units /></Layout>} />
       <Route path="/products/quantity-adjustments" element={<Layout><QuantityAdjustments /></Layout>} />
       <Route path="/products/quantity-adjustments/create" element={<Layout><AddQuantityAdjustment /></Layout>} />
